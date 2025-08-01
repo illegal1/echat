@@ -1,0 +1,23 @@
+extends base
+block scripts 
+  script(defer='' src='/js/login.js')
+block content
+  section.login-card
+    header
+      h2 Login to eChat
+    form#login-form(autocomplete='off')
+      label
+        | Username
+        input#login-username(type='text' name='username' required='' autocomplete='username')
+      label
+        | Password
+        input#login-password(type='password' name='password' required='' autocomplete='current-password')
+      button(type='submit' style='width:100%;') Login
+    footer(style='margin-top:1rem; text-align:center;')
+      small
+        | Don&apos;t have an account? 
+        a(href='signup') Sign up
+
+
+
+

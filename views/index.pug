@@ -1,0 +1,39 @@
+extends base
+block scripts 
+  script.
+    window.currentUser = !{JSON.stringify(user)};
+  script(defer src='/js/script.js')
+block content
+  section#login-section
+    header
+      h2 Join Chat
+    .grid
+      .rooms-list
+        h4 Available Rooms
+        select#room-select
+          option(value='' disabled selected) Select a room
+        #password-container
+          label(for="room-password") Room Password
+          input#room-password(type="password" placeholder="Enter password...")
+        button#join-room-btn(type='button') Join
+        button(data-target='create-room-modal' onclick="document.getElementById('create-room-modal').showModal()") Create New Room
+  section#chat-window
+    h3#room-title Room: General
+    #messages
+    form#message-form.grid
+      input#message-input(placeholder='Type a message...' autocomplete='off')
+      button#send-message(type='submit') Send
+  dialog#create-room-modal
+    article
+      header
+        button(aria-label='Close' rel='prev' onclick="this.closest('dialog').close()")
+        p
+          strong Create a New Room
+      form#create-room-form
+        label
+          | Room Name
+          input#new-room-name(type='text' required='')
+        label
+          | Password (optional)
+          input#new-room-password(type='password')
+        button(type='submit') Create

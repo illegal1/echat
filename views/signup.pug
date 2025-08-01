@@ -1,0 +1,30 @@
+extends base
+block scripts 
+  script(defer='' src='/js/signup.js')
+block content
+  section.login-card
+    header
+      h2 Signup to eChat
+    form#signup-form(autocomplete='off')
+      label
+        | Username
+        input#signup-username(type='text' name='username' required='' autocomplete='username')
+      label
+        | Username
+        input#signup-email(type='text' name='email' required='' autocomplete='email' placeholder='example@gmail.com')
+      label
+        | Password
+        input#signup-password(type='password' name='password' required='' autocomplete='current-password')
+
+      label
+        | Repeat Password
+        input#signup-password-repeat(type='password' name='password' required='' autocomplete='current-password')
+      button(type='submit' style='width:100%;') Sign up
+    footer(style='margin-top:1rem; text-align:center;')
+      small
+        | have an account? 
+        a(href='/login') login
+
+
+
+

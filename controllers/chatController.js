@@ -1,8 +1,16 @@
 const Message = require('../models/Message');
+const Room = require('../models/Room');
 
-const handleJoinRoom = async (ws, user, data) => {
+module.exports.handleJoinRoom = async (ws, user, data) => {
+  const { room, username, password } = data;
+
   user.room = data.room;
   const messages = await Message.getRecent(user.room);
+  const roomData = await Room.getRoom(room);
+  if (roomData.password !== password) {
+    ws.send(JSON.stringify({ type: 'ERROR', message: 'Wrong password' }));
+    return ws.close();
+  }
   messages.forEach((row) => {
     ws.send(
       JSON.stringify({
@@ -16,10 +24,10 @@ const handleJoinRoom = async (ws, user, data) => {
   ws.send(JSON.stringify({ type: 'JOINED_ROOM', room: user.room }));
 };
 
-async function handleChat(clients, userId, user, data) {
+module.exports.handleChat = async function (clients, userId, user, data) {
   if (!user.room || !data.message) return;
   for (let [id, client] of clients) {
-    if (client.room === user.room && client.socket.readyState === 1) {
+    if (client.user.room === user.room && client.socket.readyState === 1) {
       client.socket.send(
         JSON.stringify({
           type: 'CHAT',
@@ -33,6 +41,4 @@ async function handleChat(clients, userId, user, data) {
     }
   }
   await Message.create(user.room, user.username, data.message);
-}
-
-module.exports = { handleJoinRoom, handleChat };
+};

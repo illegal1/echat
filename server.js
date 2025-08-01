@@ -3,6 +3,7 @@ const app = require('./app');
 const setupWebSocket = require('./ws/chatSocket');
 
 const server = http.createServer(app);
+
 setupWebSocket(server);
 
 server.listen(3000, () => {

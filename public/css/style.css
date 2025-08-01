@@ -1,0 +1,116 @@
+/* --- Reset and Base Styles --- */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+}
+
+/* --- Login Page Centering (Only Affects Pages With This Class) --- */
+.body-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Main Layout --- */
+main.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 5rem 1rem 1rem; /* top padding for navbar space */
+}
+
+/* --- Navbar Fix --- */
+nav.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+/* --- Chat Window --- */
+#chat-window {
+  margin-top: 2rem;
+}
+
+#messages {
+  overflow-y: auto;
+  border: 1px solid var(--pico-muted-border-color, #444);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  max-height: 400px;
+  background: var(--pico-card-background-color, #222);
+}
+
+/* --- Rooms List --- */
+.rooms-list ul {
+  padding: 0;
+  margin: 0;
+}
+
+.rooms-list li {
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+/* --- Login Card Styles --- */
+.login-card {
+  max-width: 400px;
+  width: 100%;
+  padding: 2rem;
+  border-radius: 1rem;
+  background: var(--pico-background-color, #222);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+  margin: auto;
+}
+
+.login-card header {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* --- Utility --- */
+#join-room-btn {
+  margin-right: 30px;
+}
+
+/* --- Force dark mode background and text --- */
+body {
+  background-color: #111;
+  color: #eee;
+}
+
+/* Override specific background areas if needed */
+main.container {
+  background-color: transparent;
+}
+
+.login-card,
+#messages {
+  background-color: #222;
+  color: #fff;
+  border-color: #444;
+}
+
+/* Navbar colors (if not using Bootstrap) */
+nav.navbar {
+  background-color: #222;
+  color: #fff;
+}
+
+html, body {
+  background-color: #111 !important;
+  color: #eee;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+h2,h4,h3 {
+    color: white !important;
+}

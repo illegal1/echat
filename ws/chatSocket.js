@@ -1,32 +1,51 @@
 const WebSocket = require('ws');
 const { v4: uuid } = require('uuid');
 const { handleJoinRoom, handleChat } = require('../controllers/chatController');
+const cookie = require('cookie');
+const jwt = require('jsonwebtoken');
 
 const setupWebSocket = (server) => {
-  const wss = new WebSocket.Server({ server });
+  const wss = new WebSocket.Server({ noServer: true });
   const clients = new Map();
+  server.on('upgrade', (request, socket, head) => {
+    let token;
+
+    const cookieHeader = request.headers.cookie;
+    if (cookieHeader) {
+      const cookies = cookie.parse(cookieHeader);
+      token = cookies.jwt;
+    }
+
+    if (!token) {
+      console.log('WS Auth: No token found in cookie. Rejecting');
+      socket.destroy();
+      return;
+    }
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        console.log('WS Auth :Invalid Token. Rejecting');
+        socket.destroy();
+        return;
+      }
+      console.log('WS Auth: Token Verified for  user', decoded.username);
+      request.user = decoded;
+
+      wss.handleUpgrade(request, socket, head, (ws) => {
+        wss.emit('connection', ws, request);
+      });
+    });
+  });
 
   //
-  const connectioncb = (ws) => {
-    const userId = uuid();
-    clients.set(userId, { socket: ws, username: null, room: null });
-    console.log(`User connected: ${userId}`);
+  const connectioncb = (ws, request) => {
+    const user = request.user;
+    const userId = request.user.userId;
+    console.log(`User connected: ${user.username}`);
+    clients.set(userId, { socket: ws, user });
     ws.send(JSON.stringify({ type: 'Welcome', userId }));
 
     ws.on('message', async (msg) => {
       const data = JSON.parse(msg);
-      const user = clients.get(userId);
-
-      if (data.type === 'SET_USERNAME') {
-        for (const [, value] of clients) {
-          if (value.username === data.username) {
-            ws.close(1000, 'Repeated Username');
-            return;
-          }
-        }
-        user.username = data.username;
-        console.log(`User ${userId} set username to ${data.username}`);
-      }
 
       if (data.type === 'JOIN_ROOM') {
         await handleJoinRoom(ws, user, data);
