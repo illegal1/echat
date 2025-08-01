@@ -77,29 +77,26 @@ module.exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-module.exports.isLoggedIn = async (req, res, next) => {
+module.exports.isLoggedIn = catchAsync(async (req, res, next) => {
   let token = req.cookies.jwt;
 
   if (!token) return next();
   // 2) Verify Token
-  try {
-    const decoded = await util.promisify(jwt.verify)(
-      token,
-      process.env.JWT_SECRET,
-    );
 
-    // 3) Check if user still exist
-    const freshUser = await User.findUser(decoded.username);
-    if (!freshUser) return next();
+  const decoded = await util.promisify(jwt.verify)(
+    token,
+    process.env.JWT_SECRET,
+  );
 
-    // THERE IS A LOGGED IN USER
-    res.locals.user = freshUser;
-    req.user = freshUser;
-    next();
-  } catch (err) {
-    next();
-  }
-};
+  // 3) Check if user still exist
+  const freshUser = await User.findUser(decoded.username);
+  if (!freshUser) return next();
+
+  // THERE IS A LOGGED IN USER
+  res.locals.user = freshUser;
+  req.user = freshUser;
+  next();
+});
 
 module.exports.redirectIfLoggedIn = (redirectPath) => {
   return (req, res, next) => {
