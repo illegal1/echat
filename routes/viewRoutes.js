@@ -12,10 +12,10 @@ router.get(
   },
 );
 
-router.use(authController.isLoggedIn);
+// router.use(authController.isLoggedIn);
 router.get('/logout', authController.logout);
 
-router.use(authController.redirectIfLoggedIn('/'));
+// router.use(authController.redirectIfLoggedIn('/'));
 
 router.get('/login', (req, res) => {
   res.render('login');
