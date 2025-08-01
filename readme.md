@@ -4,7 +4,7 @@
 
 ![License](https://img.shields.io/github/license/illegal1/echat?style=flat-square)
 ![Node Version](https://img.shields.io/badge/Node.js-18.x-blue?style=flat-square)
-![MongoDB](https://img.shields.io/badge/MongoDB-ODM%20Mongoose-green?style=flat-square)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Relational%20Database-blue?style=flat-square)
 
 ---
 
@@ -34,11 +34,11 @@
 
 | Category       | Tech                                                         |
 |----------------|--------------------------------------------------------------|
-| **Backend**    | Node.js, Express.js, WebSocket (`ws`), MongoDB               |
-| **Database**   | Mongoose (MongoDB ODM)                                       |
+| **Backend**    | Node.js, Express.js, WebSocket (`ws`)                        |
+| **Database**   | PostgreSQL (via Sequelize ORM)                               |
 | **Auth**       | JSON Web Token (`jsonwebtoken`), Bcrypt (`bcryptjs`)         |
 | **Middleware** | Cookie Parser (`cookie-parser`)                              |
-| **Frontend**   | EJS (Embedded JavaScript Templates)                          |
+| **Templating** | EJS (Embedded JavaScript Templates)                          |
 
 ---
 
@@ -49,7 +49,7 @@ Follow these instructions to get the project running locally for development or 
 ### ✅ Prerequisites
 
 - Node.js (v18.x or later)
-- MongoDB (local instance or MongoDB Atlas)
+- PostgreSQL database (local or hosted)
 
 ### 📦 Installation
 
