@@ -38,7 +38,7 @@
 | **Database**   | PostgreSQL (via Sequelize ORM)                               |
 | **Auth**       | JSON Web Token (`jsonwebtoken`), Bcrypt (`bcryptjs`)         |
 | **Middleware** | Cookie Parser (`cookie-parser`)                              |
-| **Templating** | EJS (Embedded JavaScript Templates)                          |
+| **Templating** | Pug                                                          |
 
 ---
 
