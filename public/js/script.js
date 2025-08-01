@@ -12,7 +12,7 @@ function joinChat(room, password) {
   // const username = document.getElementById('username').value;
   const username = window.currentUser.username;
 
-  ws = new WebSocket('ws://localhost:3000');
+  ws = new WebSocket('ws://localhost:5000');
 
   ws.onopen = () => {
     console.log('Connected to WebSocket');

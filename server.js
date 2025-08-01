@@ -7,5 +7,5 @@ const server = http.createServer(app);
 setupWebSocket(server);
 
 server.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
+  console.log('Server running on http://localhost:5000');
 });
