@@ -1,10 +1,14 @@
 const Message = require('../models/Message');
 const Room = require('../models/Room');
+const roomState = require('../state/roomState');
+const multer = require('multer');
+const path = require('path');
 
-module.exports.handleJoinRoom = async (ws, user, data) => {
+module.exports.handleJoinRoom = async (ws, user, data, clients) => {
   const { room, username, password } = data;
 
   user.room = data.room;
+  roomState.addUserToRoom(data.room, user.userId);
   const messages = await Message.getRecent(user.room);
   const roomData = await Room.getRoom(room);
   if (roomData.password !== password) {
@@ -21,7 +25,28 @@ module.exports.handleJoinRoom = async (ws, user, data) => {
       }),
     );
   });
-  ws.send(JSON.stringify({ type: 'JOINED_ROOM', room: user.room }));
+  const onlineUsers = roomState.getUsersInRoom(data.room);
+  ws.send(
+    JSON.stringify({
+      type: 'JOIN_SUCCESS',
+      room: user.room,
+      users: onlineUsers,
+    }),
+  );
+  onlineUsers.forEach((member) => {
+    if (member.userId !== user.userId) {
+      const clientSocket = clients.get(member.userId).socket;
+
+      if (clientSocket && clientSocket.readyState === 1) {
+        clientSocket.send(
+          JSON.stringify({
+            type: 'USER_JOINED',
+            users: onlineUsers,
+          }),
+        );
+      }
+    }
+  });
 };
 
 module.exports.handleChat = async function (clients, userId, user, data) {
@@ -41,4 +66,23 @@ module.exports.handleChat = async function (clients, userId, user, data) {
     }
   }
   await Message.create(user.room, user.username, data.message);
+};
+
+module.exports.handleLeaveRoom = async (clients, user) => {
+  const onlineUsers = roomState.getUsersInRoom(user.room);
+  if (!onlineUsers) return;
+  onlineUsers.forEach((member) => {
+    if (member.userId !== user.userId) {
+      const clientSocket = clients.get(member.userId).socket;
+
+      if (clientSocket && clientSocket.readyState === 1) {
+        clientSocket.send(
+          JSON.stringify({
+            type: 'USER_LEFT',
+            onlineUsers,
+          }),
+        );
+      }
+    }
+  });
 };

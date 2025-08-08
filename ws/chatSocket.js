@@ -1,8 +1,12 @@
 const WebSocket = require('ws');
-const { v4: uuid } = require('uuid');
-const { handleJoinRoom, handleChat } = require('../controllers/chatController');
+const {
+  handleJoinRoom,
+  handleChat,
+  handleLeaveRoom,
+} = require('../controllers/chatController');
 const cookie = require('cookie');
 const jwt = require('jsonwebtoken');
+const roomState = require('../state/roomState');
 
 const setupWebSocket = (server) => {
   const wss = new WebSocket.Server({ noServer: true });
@@ -41,14 +45,17 @@ const setupWebSocket = (server) => {
     const user = request.user;
     const userId = request.user.userId;
     console.log(`User connected: ${user.username}`);
+
+    // Add user to our state
     clients.set(userId, { socket: ws, user });
+    roomState.addUser(userId, { userId: user.userId, username: user.username });
     ws.send(JSON.stringify({ type: 'Welcome', userId }));
 
     ws.on('message', async (msg) => {
       const data = JSON.parse(msg);
 
       if (data.type === 'JOIN_ROOM') {
-        await handleJoinRoom(ws, user, data);
+        await handleJoinRoom(ws, user, data, clients);
       }
       if (data.type === 'CHAT') {
         await handleChat(clients, userId, user, data);
@@ -57,6 +64,8 @@ const setupWebSocket = (server) => {
     ws.on('close', () => {
       console.log(`User disconnected: ${userId}`);
       clients.delete(userId);
+      roomState.removeUser(userId);
+      handleLeaveRoom(clients, user);
     });
   };
   wss.on('connection', connectioncb);

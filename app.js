@@ -5,6 +5,9 @@ const roomController = require('./controllers/roomController');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const viewRouter = require('./routes/viewRoutes');
+const chatController = require('./controllers/chatController');
+const uploadController = require('./controllers/uploadController');
+
 const dotenv = require('dotenv');
 dotenv.config({ path: 'config.env' });
 
@@ -17,9 +20,15 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.post('/api/signup', authController.isLoggedIn, authController.signup);
+app.post(
+  '/api/upload',
+  uploadController.upload,
+  uploadController.uploadFileController,
+);
 app.post('/api/login', authController.login);
 app.get('/api/rooms', roomController.getAllRooms);
 app.post('/api/rooms', authController.protect, roomController.createRoom);
+app.get('/api/rooms/:roomName/users', roomController.getOnlineUsers);
 
 app.use('/', viewRouter);
 app.use((err, req, res, next) => {

@@ -1,39 +1,73 @@
 extends base
+
 block scripts 
   script.
+    // Make user data available to the frontend script
     window.currentUser = !{JSON.stringify(user)};
   script(defer src='/js/script.js')
+
 block content
-  section#login-section
-    header
-      h2 Join Chat
-    .grid
-      .rooms-list
-        h4 Available Rooms
-        select#room-select
-          option(value='' disabled selected) Select a room
-        #password-container
-          label(for="room-password") Room Password
-          input#room-password(type="password" placeholder="Enter password...")
-        button#join-room-btn(type='button') Join
-        button(data-target='create-room-modal' onclick="document.getElementById('create-room-modal').showModal()") Create New Room
-  section#chat-window
-    h3#room-title Room: General
-    #messages
-    form#message-form.grid
-      input#message-input(placeholder='Type a message...' autocomplete='off')
-      button#send-message(type='submit') Send
-  dialog#create-room-modal
-    article
-      header
-        button(aria-label='Close' rel='prev' onclick="this.closest('dialog').close()")
-        p
-          strong Create a New Room
-      form#create-room-form
-        label
-          | Room Name
-          input#new-room-name(type='text' required='')
-        label
-          | Password (optional)
-          input#new-room-password(type='password')
-        button(type='submit') Create
+  // This section is for selecting and joining a room - RESTYLED WITH BOOTSTRAP
+  section#login-section.card.p-4.mx-auto(style="max-width: 500px;")
+    header.text-center
+      h2.card-title Join Chat
+    
+    div
+      h4.h6 Available Rooms
+      select#room-select.form-select.mb-3
+        option(value='' disabled selected) Select a room
+      
+      #password-container.mb-3
+        label.form-label(for="room-password") Room Password
+        input#room-password.form-control(type="password" placeholder="Enter password...")
+      
+      .d-grid.gap-2.d-md-flex
+        button#join-room-btn.btn.btn-primary.w-100(type='button') Join
+        button.btn.btn-secondary.w-100(type='button' data-bs-toggle='modal' data-bs-target='#create-room-modal') Create Room
+
+  // This is the main chat view, initially hidden
+  section#chat-window.grid
+    // Main chat content area
+    main.chat-main
+      h3#room-title Room: 
+      #messages
+      
+      // UPDATED MESSAGE FORM WITH FILE UPLOAD BUTTON
+      form#message-form.mt-auto
+        .input-group
+          // This is the visible button for attaching files
+          button#upload-btn.btn.btn-outline-secondary(type='button' title='Attach file')
+            i.bi.bi-paperclip
+          
+          // The actual file input, which we keep hidden
+          input#file-input(type='file' accept="image/*,video/*,.gif" hidden)
+
+          // The text message input
+          input#message-input.form-control(placeholder='Type a message...' autocomplete='off')
+          
+          // The submit button
+          button#send-message.btn.btn-primary(type='submit') Send
+        
+    // Sidebar for displaying online users
+    aside.user-sidebar
+      h4 Online Users
+      ul#user-list
+
+  // MODAL - Updated to use Bootstrap's data-bs-target for triggering
+  #create-room-modal.modal.fade(tabindex='-1')
+    .modal-dialog.modal-dialog-centered
+      .modal-content
+        form#create-room-form
+          .modal-header
+            h5.modal-title Create a New Room
+            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+          .modal-body
+            .mb-3
+              label.form-label(for='new-room-name') Room Name
+              input#new-room-name.form-control(type='text' name='name' required)
+            .mb-3
+              label.form-label(for='new-room-password') Password (optional)
+              input#new-room-password.form-control(type='password' name='password')
+          .modal-footer
+            button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Close
+            button.btn.btn-primary(type='submit') Create
